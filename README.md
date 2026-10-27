@@ -55,7 +55,7 @@ Diseñada bajo arquitectura limpia, reglas estrictas de concurrencia pesimista e
 Clona el repositorio e instala las dependencias bloqueadas por `package-lock.json`:
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone <https://github.com/Blurtrace/CoSpace)>
 cd CoSpace
 npm ci
 ```
