@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import { Repository, DataSource } from "typeorm";
 import { getDataSource } from "@/database/data-source";
 import { Reservation, ReservationStatus } from "@/database/entities/Reservation";
 import { Space } from "@/database/entities/Space";
@@ -11,6 +13,45 @@ import {
 } from "@/lib/errors";
 
 export class ReservationService {
+  /**
+   * Obtiene el repositorio de Reservation de forma segura bajo Next.js/Turbopack.
+   */
+  private static getReservationRepo(dataSource: DataSource): Repository<Reservation> {
+    if (dataSource.hasMetadata(Reservation)) {
+      return dataSource.getRepository(Reservation);
+    }
+    return dataSource.getRepository<Reservation>("Reservation");
+  }
+
+  /**
+   * Obtiene el repositorio de Space de forma segura bajo Next.js/Turbopack.
+   */
+  private static getSpaceRepo(dataSource: DataSource): Repository<Space> {
+    if (dataSource.hasMetadata(Space)) {
+      return dataSource.getRepository(Space);
+    }
+    return dataSource.getRepository<Space>("Space");
+  }
+
+  /**
+   * Obtiene la fecha y hora declarada en la cadena ISO en el contexto de tiempo
+   * local para evitar falsos positivos por desfase UTC al comparar con la hora actual.
+   */
+  private static parseDeclaredDateTime(isoString: string, fallbackDate: Date): Date {
+    const match = isoString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (match) {
+      const [, y, m, d, hh, mm] = match;
+      return new Date(
+        parseInt(y, 10),
+        parseInt(m, 10) - 1,
+        parseInt(d, 10),
+        parseInt(hh, 10),
+        parseInt(mm, 10)
+      );
+    }
+    return fallbackDate;
+  }
+
   /**
    * Obtiene la hora declarada en la cadena ISO para evitar desajustes
    * causados por la zona horaria del servidor (UTC vs local).
@@ -31,7 +72,7 @@ export class ReservationService {
 
   static async listUserReservations(userId: string): Promise<Reservation[]> {
     const dataSource = await getDataSource();
-    const reservationRepository = dataSource.getRepository(Reservation);
+    const reservationRepository = this.getReservationRepo(dataSource);
 
     return reservationRepository.find({
       where: { userId },
@@ -42,7 +83,7 @@ export class ReservationService {
 
   static async listAllReservationsForAdmin(): Promise<Reservation[]> {
     const dataSource = await getDataSource();
-    const reservationRepository = dataSource.getRepository(Reservation);
+    const reservationRepository = this.getReservationRepo(dataSource);
 
     return reservationRepository.find({
       relations: ["space", "user"],
@@ -56,7 +97,7 @@ export class ReservationService {
     userRole: UserRole
   ): Promise<Reservation> {
     const dataSource = await getDataSource();
-    const reservationRepository = dataSource.getRepository(Reservation);
+    const reservationRepository = this.getReservationRepo(dataSource);
 
     const reservation = await reservationRepository.findOne({
       where: { id: reservationId },
@@ -79,8 +120,10 @@ export class ReservationService {
     userId: string,
     input: CreateReservationInput
   ): Promise<Reservation> {
-    const startDate = new Date(input.startTime);
-    const endDate = new Date(input.endTime);
+    const fallbackStart = new Date(input.startTime);
+    const fallbackEnd = new Date(input.endTime);
+    const startDate = this.parseDeclaredDateTime(input.startTime, fallbackStart);
+    const endDate = this.parseDeclaredDateTime(input.endTime, fallbackEnd);
     const now = new Date();
 
     // 1. Regla 1: Duración de 1 a 4 horas completas
@@ -99,29 +142,31 @@ export class ReservationService {
       );
     }
 
-    // 2. Regla 2: Horario permitido 07:00–21:00
-    const startDeclared = this.parseDeclaredHour(input.startTime, startDate);
-    const endDeclaredHour = startDeclared.hour + durationHours;
+    // 2. Regla 2: Horario de atención permitido de 07:00 a 21:00
+    const startHourParsed = this.parseDeclaredHour(input.startTime, startDate);
+    const endHourParsed = this.parseDeclaredHour(input.endTime, endDate);
 
-    if (
-      startDeclared.minutes !== 0 ||
-      startDeclared.hour < 7 ||
-      endDeclaredHour > 21
-    ) {
+    const isStartValid =
+      startHourParsed.hour >= 7 &&
+      (startHourParsed.hour < 21 || (startHourParsed.hour === 21 && startHourParsed.minutes === 0));
+
+    const isEndValid =
+      endHourParsed.hour >= 7 &&
+      (endHourParsed.hour < 21 || (endHourParsed.hour === 21 && endHourParsed.minutes === 0));
+
+    if (!isStartValid || !isEndValid) {
       throw new BadRequestError(
-        "El horario permitido para reservas es de 07:00 a 21:00 en horas en punto"
+        "Las reservas solo están permitidas dentro del horario de atención de 07:00 a 21:00"
       );
     }
 
-    // 3. Regla 3: No reservar en el pasado ni a más de 30 días
-    if (startDate.getTime() < now.getTime()) {
-      throw new BadRequestError(
-        "No es posible realizar reservas en fechas u horas pasadas"
-      );
+    // 3. Regla 3: No en el pasado ni con más de 30 días de anticipación
+    if (startDate.getTime() <= now.getTime()) {
+      throw new BadRequestError("No se pueden realizar reservas en fechas u horas pasadas");
     }
 
     const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-    if (startDate.getTime() > now.getTime() + thirtyDaysMs) {
+    if (startDate.getTime() - now.getTime() > thirtyDaysMs) {
       throw new BadRequestError(
         "No es posible realizar reservas con más de 30 días de anticipación"
       );
@@ -132,7 +177,8 @@ export class ReservationService {
     // Ejecución transaccional con bloqueo pesimista para evitar condiciones de carrera (concurrencia)
     return dataSource.transaction(async (transactionManager) => {
       // Bloqueo PESIMISTA de escritura sobre el espacio (SELECT ... FOR UPDATE)
-      const space = await transactionManager.findOne(Space, {
+      const spaceTarget = dataSource.hasMetadata(Space) ? Space : "Space";
+      const space = await transactionManager.findOne<Space>(spaceTarget as any, {
         where: { id: input.spaceId },
         lock: { mode: "pessimistic_write" },
       });
@@ -143,91 +189,84 @@ export class ReservationService {
 
       // 4. Regla 7: No reservar espacios desactivados
       if (!space.isActive) {
-        throw new BadRequestError(
-          "El espacio seleccionado se encuentra desactivado y no admite reservas"
-        );
+        throw new BadRequestError("No se pueden realizar reservas en espacios inactivos");
       }
 
-      // 5. Regla 6: Máximo 3 reservas futuras confirmadas por usuario
-      const userFutureConfirmedCount = await transactionManager
-        .getRepository(Reservation)
-        .createQueryBuilder("r")
-        .where("r.userId = :userId", { userId })
-        .andWhere("r.status = :status", { status: "confirmed" })
-        .andWhere("r.endTime > :now", { now })
-        .getCount();
-
-      if (userFutureConfirmedCount >= 3) {
-        throw new ConflictError(
-          "Has alcanzado el límite máximo de 3 reservas futuras confirmadas"
-        );
-      }
-
-      // 6. Regla 5: El usuario no puede solapar sus propias reservas confirmadas
-      const userOverlap = await transactionManager
-        .getRepository(Reservation)
-        .createQueryBuilder("r")
-        .where("r.userId = :userId", { userId })
-        .andWhere("r.status = :status", { status: "confirmed" })
-        .andWhere("r.startTime < :endDate AND r.endTime > :startDate", {
-          startDate,
-          endDate,
-        })
-        .getOne();
-
-      if (userOverlap) {
-        throw new ConflictError(
-          "Ya posees otra reserva confirmada que se solapa con el horario seleccionado"
-        );
-      }
-
-      // 7. Regla 4: No solapar reservas confirmadas del mismo espacio
-      const spaceOverlap = await transactionManager
-        .getRepository(Reservation)
-        .createQueryBuilder("r")
-        .where("r.spaceId = :spaceId", { spaceId: space.id })
-        .andWhere("r.status = :status", { status: "confirmed" })
-        .andWhere("r.startTime < :endDate AND r.endTime > :startDate", {
-          startDate,
-          endDate,
-        })
-        .getOne();
-
-      if (spaceOverlap) {
-        throw new ConflictError(
-          "El espacio ya cuenta con una reserva confirmada en el horario solicitado"
-        );
-      }
-
-      // 8. Regla 8: El servidor calcula el precio total con duración × precio por hora
-      const calculatedTotalPrice = Number(
-        (durationHours * space.pricePerHour).toFixed(2)
-      );
-
-      const reservation = transactionManager.getRepository(Reservation).create({
-        userId,
-        spaceId: space.id,
-        startTime: startDate,
-        endTime: endDate,
-        totalPrice: calculatedTotalPrice,
-        status: "confirmed",
+      // 5. Regla 4: Máximo 3 reservas activas simultáneas por usuario
+      const resTarget = dataSource.hasMetadata(Reservation) ? Reservation : "Reservation";
+      const userActiveReservationsCount = await transactionManager.count(resTarget as any, {
+        where: {
+          userId,
+          status: "confirmed",
+        },
       });
 
-      const savedReservation = await transactionManager
-        .getRepository(Reservation)
-        .save(reservation);
+      if (userActiveReservationsCount >= 3) {
+        throw new BadRequestError(
+          "Has alcanzado el límite máximo permitido de 3 reservas activas simultáneas"
+        );
+      }
 
+      // 6. Regla 5: Sin solapamiento en el mismo espacio (concurrencia y ocupación)
+      const overlappingSpaceReservation = await transactionManager
+        .createQueryBuilder(resTarget as any, "reservation")
+        .where("reservation.spaceId = :spaceId", { spaceId: input.spaceId })
+        .andWhere("reservation.status = :status", { status: "confirmed" })
+        .andWhere(
+          "((reservation.startTime <= :startTime AND reservation.endTime > :startTime) OR (reservation.startTime < :endTime AND reservation.endTime >= :endTime) OR (reservation.startTime >= :startTime AND reservation.endTime <= :endTime))",
+          { startTime: startDate, endTime: endDate }
+        )
+        .getOne();
+
+      if (overlappingSpaceReservation) {
+        throw new ConflictError(
+          "El espacio seleccionado ya se encuentra reservado en el horario solicitado"
+        );
+      }
+
+      // 7. Regla 6: Sin solapamiento del mismo usuario en diferentes espacios
+      const overlappingUserReservation = await transactionManager
+        .createQueryBuilder(resTarget as any, "reservation")
+        .where("reservation.userId = :userId", { userId })
+        .andWhere("reservation.status = :status", { status: "confirmed" })
+        .andWhere(
+          "((reservation.startTime <= :startTime AND reservation.endTime > :startTime) OR (reservation.startTime < :endTime AND reservation.endTime >= :endTime) OR (reservation.startTime >= :startTime AND reservation.endTime <= :endTime))",
+          { startTime: startDate, endTime: endDate }
+        )
+        .getOne();
+
+      if (overlappingUserReservation) {
+        throw new ConflictError(
+          "Ya tienes otra reserva confirmada que se solapa con el horario seleccionado"
+        );
+      }
+
+      // 8. Regla 8: Precio calculado en servidor = duracion_horas * precio_por_hora
+      const totalPrice = Number((durationHours * Number(space.pricePerHour)).toFixed(2));
+
+      // Crear y persistir la reserva confirmada
+      const newReservation = transactionManager.create(resTarget as any, {
+        userId,
+        spaceId: input.spaceId,
+        startTime: startDate,
+        endTime: endDate,
+        totalPrice,
+        status: "confirmed",
+      }) as unknown as Reservation;
+
+      const savedReservation = await transactionManager.save(newReservation);
+      savedReservation.space = space;
       return savedReservation;
     });
   }
 
   static async cancelReservation(
     reservationId: string,
-    requestingUserId: string,
-    requestingUserRole: UserRole
+    userId: string,
+    userRole: UserRole
   ): Promise<Reservation> {
     const dataSource = await getDataSource();
-    const reservationRepository = dataSource.getRepository(Reservation);
+    const reservationRepository = this.getReservationRepo(dataSource);
 
     const reservation = await reservationRepository.findOne({
       where: { id: reservationId },
@@ -235,38 +274,32 @@ export class ReservationService {
     });
 
     if (!reservation) {
-      throw new NotFoundError("La reserva a cancelar no existe");
+      throw new NotFoundError("La reserva solicitada no existe");
     }
 
-    // Regla 9: Solo el dueño de la reserva o un administrador puede cancelarla
-    const isOwner = reservation.userId === requestingUserId;
-    const isAdmin = requestingUserRole === "admin";
-
-    if (!isOwner && !isAdmin) {
-      throw new ForbiddenError(
-        "No tienes autorización para cancelar la reserva de otro usuario"
-      );
+    // Regla 9: Solo el propietario o el administrador pueden cancelar
+    if (userRole !== "admin" && reservation.userId !== userId) {
+      throw new ForbiddenError("No tienes permiso para cancelar esta reserva");
     }
 
-    // Si ya está cancelada, no permitir cancelar de nuevo
+    // Si ya está cancelada, no hacer nada
     if (reservation.status === "cancelled") {
-      throw new BadRequestError("La reserva ya ha sido cancelada previamente");
+      return reservation;
     }
 
-    // Regla 10: El usuario solo puede cancelar hasta 2 horas antes del inicio
+    // Regla 10: Cancelación permitida únicamente con al menos 2 horas de anticipación
     const now = new Date();
-    const twoHoursMs = 2 * 60 * 60 * 1000;
-    const timeUntilStart = reservation.startTime.getTime() - now.getTime();
+    const reservationStartTime = new Date(reservation.startTime);
+    const twoHoursInMs = 2 * 60 * 60 * 1000;
 
-    if (!isAdmin && timeUntilStart < twoHoursMs) {
+    if (reservationStartTime.getTime() - now.getTime() < twoHoursInMs) {
       throw new BadRequestError(
-        "Las cancelaciones deben realizarse con al menos 2 horas de anticipación a la hora de inicio"
+        "Solo es posible cancelar una reserva con al menos 2 horas de anticipación a su inicio"
       );
     }
 
-    // Regla 11: Cancelar cambia el estado, no elimina el registro
+    // Regla 11: La cancelación es lógica (status = 'cancelled'), no elimina físicamente
     reservation.status = "cancelled";
     return reservationRepository.save(reservation);
   }
 }
-

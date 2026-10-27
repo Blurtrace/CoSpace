@@ -1,69 +1,31 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { LogOut, User as UserIcon, LayoutDashboard, Shield } from "lucide-react";
-import { UserRole } from "@/types/auth";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useTranslation } from "./LanguageContext";
-
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-}
+import { useAuth } from "./AuthContext";
 
 export const Navbar: React.FC = () => {
-  const router = useRouter();
   const pathname = usePathname();
   const { t } = useTranslation();
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const response = await fetch("/api/auth/me", { credentials: "include" });
-        if (response.ok) {
-          const json = await response.json();
-          setUser(json.data.user);
-        } else {
-          setUser(null);
-        }
-      } catch {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    checkAuth();
-  }, [pathname]);
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      setUser(null);
-      router.push("/");
-      router.refresh();
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-    }
-  };
+  const { user, loading, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-[#282828] bg-[#121212]/95 px-6 backdrop-blur">
+    <header className="sticky top-0 z-40 flex h-20 w-full items-center justify-between border-b border-[#ebebeb] bg-white/95 px-6 md:px-10 backdrop-blur">
       <div className="flex items-center gap-8">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="h-7 w-7 rounded-full bg-[#1ed760] flex items-center justify-center font-black text-black text-xs transition-transform group-hover:scale-105">
-            CS
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white group-hover:text-[#1ed760] transition-colors">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <Image
+            src="/gemini-svg.svg"
+            alt="CoSpace"
+            width={34}
+            height={34}
+            className="h-8 w-8 rounded-lg object-contain transition-transform group-hover:scale-105"
+            priority
+          />
+          <span className="text-xl font-extrabold tracking-tight text-[#ff385c] transition-colors">
             CoSpace
           </span>
         </Link>
@@ -72,7 +34,7 @@ export const Navbar: React.FC = () => {
           <Link
             href="/spaces"
             className={`text-sm font-semibold transition-colors ${
-              pathname === "/spaces" ? "text-white font-bold" : "text-[#b3b3b3] hover:text-white"
+              pathname === "/spaces" ? "text-[#222222] font-bold" : "text-[#6a6a6a] hover:text-[#222222]"
             }`}
           >
             {t("nav.spaces")}
@@ -82,7 +44,7 @@ export const Navbar: React.FC = () => {
             <Link
               href="/dashboard/reservas"
               className={`text-sm font-semibold flex items-center gap-1.5 transition-colors ${
-                pathname.startsWith("/dashboard") ? "text-white font-bold" : "text-[#b3b3b3] hover:text-white"
+                pathname.startsWith("/dashboard") ? "text-[#222222] font-bold" : "text-[#6a6a6a] hover:text-[#222222]"
               }`}
             >
               <LayoutDashboard className="h-4 w-4" />
@@ -94,7 +56,7 @@ export const Navbar: React.FC = () => {
             <Link
               href="/admin/espacios"
               className={`text-sm font-semibold flex items-center gap-1.5 transition-colors ${
-                pathname.startsWith("/admin") ? "text-[#1ed760] font-bold" : "text-[#b3b3b3] hover:text-[#1ed760]"
+                pathname.startsWith("/admin") ? "text-[#ff385c] font-bold" : "text-[#6a6a6a] hover:text-[#ff385c]"
               }`}
             >
               <Shield className="h-4 w-4" />
@@ -104,24 +66,21 @@ export const Navbar: React.FC = () => {
         </nav>
       </div>
 
-      <div className="flex items-center gap-4">
-        {/* Selector de Idioma */}
-        <LanguageSwitcher />
-
+      <div className="flex items-center gap-3">
         {!loading && (
           <>
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-bold text-white">{user.name}</span>
-                  <span className="text-[10px] text-[#7c7c7c] uppercase">{user.role}</span>
+                  <span className="text-xs font-bold text-[#222222]">{user.name}</span>
+                  <span className="text-[10px] text-[#6a6a6a] uppercase font-medium">{user.role}</span>
                 </div>
-                <div className="h-8 w-8 rounded-full bg-[#282828] flex items-center justify-center text-[#b3b3b3] border border-[#383838]">
+                <div className="h-9 w-9 rounded-full bg-[#f7f7f7] flex items-center justify-center text-[#222222] border border-[#dddddd]">
                   <UserIcon className="h-4 w-4" />
                 </div>
                 <button
-                  onClick={handleLogout}
-                  className="rounded-full p-2 text-[#b3b3b3] hover:bg-[#1f1f1f] hover:text-[#f3727f] transition-colors"
+                  onClick={logout}
+                  className="rounded-full p-2 text-[#6a6a6a] hover:bg-[#f7f7f7] hover:text-[#ff385c] transition-colors"
                   title={t("nav.logout")}
                   aria-label={t("nav.logout")}
                 >
@@ -132,13 +91,13 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Link
                   href="/login"
-                  className="rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider text-[#b3b3b3] hover:text-white transition-colors"
+                  className="rounded-full px-4 py-2 text-sm font-semibold text-[#222222] hover:bg-[#f7f7f7] transition-colors"
                 >
                   {t("nav.login")}
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-full bg-white px-5 py-2 text-xs font-bold uppercase tracking-wider text-black transition-transform hover:scale-105 active:scale-95"
+                  className="rounded-full bg-[#ff385c] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#e00b41] hover:shadow-sm active:scale-95"
                 >
                   {t("nav.register")}
                 </Link>

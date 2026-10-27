@@ -23,12 +23,12 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#121212] text-white">
+    <div className="flex min-h-screen flex-col bg-white text-[#222222]">
       <Navbar />
-      <div className="bg-[#1f1f1f] border-b border-[#2e2e2e] py-2 px-6">
-        <div className="mx-auto max-w-7xl flex items-center justify-between text-xs font-semibold text-[#1ed760]">
+      <div className="bg-[#fff1f3] border-b border-[#ffd1da] py-2 px-6">
+        <div className="mx-auto max-w-7xl flex items-center justify-between text-xs font-semibold text-[#ff385c]">
           <span>Panel de Administración CoSpace</span>
-          <span className="text-[#7c7c7c]">Acceso autorizado</span>
+          <span className="text-[#6a6a6a]">Acceso autorizado</span>
         </div>
       </div>
       <div className="flex-1">{children}</div>

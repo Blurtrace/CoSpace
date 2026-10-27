@@ -39,13 +39,13 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
   const isCancellable = isConfirmed && startDate.getTime() - now.getTime() >= twoHoursMs;
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-[#282828] bg-[#181818] p-5 shadow-sm transition-all hover:border-[#383838]">
+    <div className="flex flex-col justify-between rounded-2xl border border-[#ebebeb] bg-white p-5 shadow-sm transition-all hover:border-[#dddddd] hover:shadow-md">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <span className="text-xs font-semibold text-[#1ed760] uppercase tracking-wider">
+          <span className="text-xs font-semibold text-[#ff385c] uppercase tracking-wider">
             {reservation.space?.type ? reservation.space.type.replace("_", " ") : "Espacio"}
           </span>
-          <h4 className="text-lg font-bold text-white mt-0.5">
+          <h4 className="text-lg font-bold text-[#222222] mt-0.5">
             {reservation.space?.name || "Espacio CoSpace"}
           </h4>
         </div>
@@ -54,20 +54,20 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
         </Badge>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-2 text-xs text-[#b3b3b3] border-t border-[#282828] pt-3 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-2 text-xs text-[#6a6a6a] border-t border-[#ebebeb] pt-3 sm:grid-cols-2">
         <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-[#7c7c7c]" />
-          <span>Inicio: <ClientDate date={reservation.startTime} format="datetime" className="font-medium text-white" /></span>
+          <Calendar className="h-4 w-4 text-[#929292]" />
+          <span>Inicio: <ClientDate date={reservation.startTime} format="datetime" className="font-semibold text-[#222222]" /></span>
         </div>
         <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-[#7c7c7c]" />
-          <span>Fin: <ClientDate date={reservation.endTime} format="datetime" className="font-medium text-white" /></span>
+          <Clock className="h-4 w-4 text-[#929292]" />
+          <span>Fin: <ClientDate date={reservation.endTime} format="datetime" className="font-semibold text-[#222222]" /></span>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between border-t border-[#282828] pt-3">
-        <div className="flex items-center gap-1 text-sm font-bold text-white">
-          <DollarSign className="h-4 w-4 text-[#1ed760]" />
+      <div className="mt-4 flex items-center justify-between border-t border-[#ebebeb] pt-3">
+        <div className="flex items-center gap-1 text-sm font-bold text-[#222222]">
+          <DollarSign className="h-4 w-4 text-[#ff385c]" />
           <span>Total: ${Number(reservation.totalPrice).toFixed(2)}</span>
         </div>
 
@@ -79,12 +79,12 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
                 size="sm"
                 onClick={() => onCancelClick(reservation.id)}
                 isLoading={isCancelling}
-                className="hover:border-[#f3727f] hover:text-[#f3727f]"
+                className="hover:border-[#c13515] hover:text-[#c13515]"
               >
                 Cancelar
               </Button>
             ) : (
-              <span className="text-[11px] text-[#7c7c7c] italic">
+              <span className="text-[11px] text-[#929292] italic">
                 {startDate.getTime() <= now.getTime()
                   ? "Reserva finalizada o en curso"
                   : "No cancelable (< 2 horas)"}
@@ -96,4 +96,3 @@ export const ReservationCard: React.FC<ReservationCardProps> = ({
     </div>
   );
 };
-

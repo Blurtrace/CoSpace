@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { ACCESS_COOKIE_NAME } from "@/lib/cookies";
 import { verifyAccessTokenEdge } from "@/lib/auth-edge";
 
@@ -19,24 +20,29 @@ export default async function AuthLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#121212] px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[#f7f7f7] px-4 py-12">
       <div className="mb-8">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="h-8 w-8 rounded-full bg-[#1ed760] flex items-center justify-center font-black text-black text-sm transition-transform group-hover:scale-105">
-            CS
-          </div>
-          <span className="text-2xl font-bold tracking-tight text-white group-hover:text-[#1ed760] transition-colors">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <Image
+            src="/gemini-svg.svg"
+            alt="CoSpace"
+            width={36}
+            height={36}
+            className="h-9 w-9 rounded-lg object-contain transition-transform group-hover:scale-105"
+            priority
+          />
+          <span className="text-2xl font-extrabold tracking-tight text-[#ff385c] transition-colors">
             CoSpace
           </span>
         </Link>
       </div>
 
-      <div className="w-full max-w-md rounded-2xl border border-[#282828] bg-[#181818] p-8 shadow-[rgba(0,0,0,0.5)_0px_8px_24px]">
+      <div className="w-full max-w-md rounded-2xl border border-[#dddddd] bg-white p-8 shadow-[rgba(0,0,0,0.06)_0px_8px_24px]">
         {children}
       </div>
 
-      <div className="mt-8 text-center text-xs text-[#7c7c7c]">
-        <Link href="/" className="hover:text-white transition-colors">
+      <div className="mt-8 text-center text-xs text-[#6a6a6a]">
+        <Link href="/" className="hover:text-[#222222] transition-colors">
           &larr; Volver a la página principal
         </Link>
       </div>

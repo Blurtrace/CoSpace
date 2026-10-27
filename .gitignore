@@ -69,4 +69,5 @@ next-env.d.ts
 # Carpetas locales excluidas del repositorio
 .agent/
 spotify/
+airbnb/
 

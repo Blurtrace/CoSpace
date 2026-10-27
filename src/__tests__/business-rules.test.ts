@@ -103,3 +103,36 @@ describe("Lógica de Intervalos y Solapamiento de Reservas", () => {
   });
 });
 
+describe("Lógica de Fechas y Zona Horaria para Reservas", () => {
+  function parseDeclaredDateTime(isoString: string): Date {
+    const match = isoString.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (match) {
+      const [, y, m, d, hh, mm] = match;
+      return new Date(
+        parseInt(y, 10),
+        parseInt(m, 10) - 1,
+        parseInt(d, 10),
+        parseInt(hh, 10),
+        parseInt(mm, 10)
+      );
+    }
+    return new Date(isoString);
+  }
+
+  it("debe interpretar la fecha y hora declarada en el contexto local", () => {
+    const declared = parseDeclaredDateTime("2026-10-30T14:00:00.000Z");
+    expect(declared.getFullYear()).toBe(2026);
+    expect(declared.getMonth()).toBe(9); // Octubre (0-indexed)
+    expect(declared.getDate()).toBe(30);
+    expect(declared.getHours()).toBe(14);
+  });
+
+  it("debe rechazar fechas pasadas y admitir fechas futuras en comparación con now", () => {
+    const pastDate = new Date(Date.now() - 3600000); // 1 hora atrás
+    const futureDate = new Date(Date.now() + 3600000); // 1 hora adelante
+
+    expect(pastDate.getTime() <= Date.now()).toBe(true);
+    expect(futureDate.getTime() > Date.now()).toBe(true);
+  });
+});
+

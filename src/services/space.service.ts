@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import { Repository, DataSource } from "typeorm";
 import { getDataSource } from "@/database/data-source";
 import { Space, SpaceType } from "@/database/entities/Space";
 import { Reservation } from "@/database/entities/Reservation";
@@ -5,9 +7,27 @@ import { CreateSpaceInput, UpdateSpaceInput } from "@/lib/validations/space.sche
 import { NotFoundError, ConflictError } from "@/lib/errors";
 
 export class SpaceService {
+  /**
+   * Obtiene el repositorio de Space de forma segura, garantizando compatibilidad
+   * tanto por referencia de clase como por nombre de entidad bajo Next.js/Turbopack.
+   */
+  private static getSpaceRepository(dataSource: DataSource): Repository<Space> {
+    if (dataSource.hasMetadata(Space)) {
+      return dataSource.getRepository(Space);
+    }
+    return dataSource.getRepository<Space>("Space");
+  }
+
+  private static getReservationRepository(dataSource: DataSource): Repository<Reservation> {
+    if (dataSource.hasMetadata(Reservation)) {
+      return dataSource.getRepository(Reservation);
+    }
+    return dataSource.getRepository<Reservation>("Reservation");
+  }
+
   static async listActiveSpaces(typeFilter?: SpaceType): Promise<Space[]> {
     const dataSource = await getDataSource();
-    const spaceRepository = dataSource.getRepository(Space);
+    const spaceRepository = this.getSpaceRepository(dataSource);
 
     const queryBuilder = spaceRepository
       .createQueryBuilder("space")
@@ -23,7 +43,7 @@ export class SpaceService {
 
   static async listAllSpaces(): Promise<Space[]> {
     const dataSource = await getDataSource();
-    const spaceRepository = dataSource.getRepository(Space);
+    const spaceRepository = this.getSpaceRepository(dataSource);
 
     return spaceRepository.find({
       order: { createdAt: "DESC" },
@@ -32,7 +52,7 @@ export class SpaceService {
 
   static async getSpaceById(id: string, requireActive = false): Promise<Space> {
     const dataSource = await getDataSource();
-    const spaceRepository = dataSource.getRepository(Space);
+    const spaceRepository = this.getSpaceRepository(dataSource);
 
     const space = await spaceRepository.findOne({
       where: { id },
@@ -51,7 +71,7 @@ export class SpaceService {
 
   static async createSpace(input: CreateSpaceInput): Promise<Space> {
     const dataSource = await getDataSource();
-    const spaceRepository = dataSource.getRepository(Space);
+    const spaceRepository = this.getSpaceRepository(dataSource);
 
     const space = spaceRepository.create({
       name: input.name,
@@ -68,7 +88,7 @@ export class SpaceService {
 
   static async updateSpace(id: string, input: UpdateSpaceInput): Promise<Space> {
     const dataSource = await getDataSource();
-    const spaceRepository = dataSource.getRepository(Space);
+    const spaceRepository = this.getSpaceRepository(dataSource);
 
     const space = await this.getSpaceById(id);
 
@@ -92,7 +112,7 @@ export class SpaceService {
 
   static async deactivateSpace(id: string): Promise<Space> {
     const dataSource = await getDataSource();
-    const spaceRepository = dataSource.getRepository(Space);
+    const spaceRepository = this.getSpaceRepository(dataSource);
 
     const space = await this.getSpaceById(id);
 
@@ -110,9 +130,9 @@ export class SpaceService {
 
   private static async validateNoFutureReservations(
     spaceId: string,
-    dataSource: Awaited<ReturnType<typeof getDataSource>>
+    dataSource: DataSource
   ): Promise<void> {
-    const reservationRepository = dataSource.getRepository(Reservation);
+    const reservationRepository = this.getReservationRepository(dataSource);
     const now = new Date();
 
     const futureActiveCount = await reservationRepository
@@ -129,4 +149,3 @@ export class SpaceService {
     }
   }
 }
-

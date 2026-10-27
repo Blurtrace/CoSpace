@@ -16,20 +16,20 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-bold uppercase tracking-wider rounded-full transition-all duration-200 select-none disabled:opacity-50 disabled:cursor-not-allowed";
+    "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 select-none disabled:opacity-50 disabled:cursor-not-allowed";
 
   const sizeStyles = {
-    sm: "px-4 py-1.5 text-xs",
-    md: "px-6 py-2.5 text-sm",
-    lg: "px-8 py-3.5 text-base",
+    sm: "px-3.5 py-1.5 text-xs rounded-lg",
+    md: "px-5 py-2.5 text-sm rounded-xl",
+    lg: "px-7 py-3.5 text-base rounded-xl",
   };
 
   const variantStyles = {
-    primary: "bg-[#1ed760] text-black hover:scale-105 active:scale-95 shadow-md hover:bg-[#1fdf64]",
-    secondary: "bg-[#1f1f1f] text-white hover:bg-[#282828] active:scale-95",
-    outline: "border border-[#7c7c7c] text-white bg-transparent hover:border-white hover:bg-white/5",
-    danger: "bg-[#f3727f] text-black hover:bg-[#ff8591] active:scale-95",
-    ghost: "bg-transparent text-[#b3b3b3] hover:text-white",
+    primary: "bg-[#ff385c] text-white hover:bg-[#e00b41] active:scale-[0.98] shadow-sm hover:shadow",
+    secondary: "bg-white text-[#222222] border border-[#222222] hover:bg-[#f7f7f7] active:scale-[0.98]",
+    outline: "border border-[#dddddd] text-[#222222] bg-white hover:border-[#222222] hover:bg-[#f7f7f7]",
+    danger: "bg-[#c13515] text-white hover:bg-[#b32505] active:scale-[0.98]",
+    ghost: "bg-transparent text-[#222222] hover:bg-[#f7f7f7]",
   };
 
   return (
@@ -59,7 +59,7 @@ export const Button: React.FC<ButtonProps> = ({
               d="M4 12a8 8 0 018-8v8H4z"
             />
           </svg>
-          <span>Cargando...</span>
+          <span>{children}</span>
         </span>
       ) : (
         children
@@ -67,4 +67,3 @@ export const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
-

@@ -50,7 +50,7 @@ export default async function SpaceDetailPage({ params }: SpaceDetailPageProps) 
       <div className="mb-6">
         <Link
           href="/spaces"
-          className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#b3b3b3] hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-[#6a6a6a] hover:text-[#222222] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Volver al catálogo</span>
@@ -60,7 +60,7 @@ export default async function SpaceDetailPage({ params }: SpaceDetailPageProps) 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
         {/* Columna Izquierda: Información del Espacio */}
         <div className="space-y-6 lg:col-span-7">
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-[#282828] shadow-[rgba(0,0,0,0.5)_0px_8px_24px]">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-[#f7f7f7] shadow-[0_4px_20px_rgba(0,0,0,0.06)] border border-[#ebebeb]">
             <Image
               src={space.imageUrl || defaultImage}
               alt={space.name}
@@ -76,43 +76,43 @@ export default async function SpaceDetailPage({ params }: SpaceDetailPageProps) 
               <Badge variant="neutral">{TYPE_LABELS[space.type]}</Badge>
               <Badge variant="success">Disponible</Badge>
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#222222] sm:text-4xl">
               {space.name}
             </h1>
           </div>
 
           {space.description && (
-            <div className="space-y-2 border-t border-[#282828] pt-4">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-[#b3b3b3]">
+            <div className="space-y-2 border-t border-[#ebebeb] pt-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-[#6a6a6a]">
                 Descripción del espacio
               </h2>
-              <p className="text-sm leading-relaxed text-[#cbcbcb]">
+              <p className="text-sm leading-relaxed text-[#3f3f3f]">
                 {space.description}
               </p>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4 border-t border-[#282828] pt-4">
-            <div className="flex items-center gap-3 rounded-lg bg-[#181818] p-4">
-              <div className="rounded-full bg-[#1f1f1f] p-2.5 text-[#1ed760]">
+          <div className="grid grid-cols-2 gap-4 border-t border-[#ebebeb] pt-4">
+            <div className="flex items-center gap-3 rounded-xl bg-[#f7f7f7] p-4 border border-[#ebebeb]">
+              <div className="rounded-full bg-white p-2.5 text-[#ff385c] shadow-sm">
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs text-[#7c7c7c]">Capacidad</p>
-                <p className="text-sm font-bold text-white">
+                <p className="text-xs text-[#6a6a6a]">Capacidad</p>
+                <p className="text-sm font-bold text-[#222222]">
                   Hasta {space.capacity} {space.capacity === 1 ? "persona" : "personas"}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 rounded-lg bg-[#181818] p-4">
-              <div className="rounded-full bg-[#1f1f1f] p-2.5 text-[#1ed760]">
+            <div className="flex items-center gap-3 rounded-xl bg-[#f7f7f7] p-4 border border-[#ebebeb]">
+              <div className="rounded-full bg-white p-2.5 text-[#ff385c] shadow-sm">
                 <DollarSign className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-xs text-[#7c7c7c]">Tarifa</p>
-                <p className="text-sm font-bold text-white">
-                  ${space.pricePerHour.toFixed(2)} <span className="text-xs font-normal text-[#7c7c7c]">/ hora</span>
+                <p className="text-xs text-[#6a6a6a]">Tarifa</p>
+                <p className="text-sm font-bold text-[#222222]">
+                  ${space.pricePerHour.toFixed(2)} <span className="text-xs font-normal text-[#6a6a6a]">/ hora</span>
                 </p>
               </div>
             </div>
@@ -129,4 +129,3 @@ export default async function SpaceDetailPage({ params }: SpaceDetailPageProps) 
     </main>
   );
 }
-

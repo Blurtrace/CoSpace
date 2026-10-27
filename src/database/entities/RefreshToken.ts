@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -37,4 +38,3 @@ export class RefreshToken {
   @CreateDateColumn({ type: "timestamp with time zone" })
   createdAt!: Date;
 }
-

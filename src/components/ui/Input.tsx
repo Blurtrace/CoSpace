@@ -13,24 +13,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex w-full flex-col gap-1.5 text-left">
         {label && (
-          <label htmlFor={inputId} className="text-xs font-bold uppercase tracking-wider text-[#b3b3b3]">
+          <label htmlFor={inputId} className="text-xs font-semibold text-[#222222]">
             {label}
           </label>
         )}
         <input
           ref={ref}
           id={inputId}
-          className={`w-full rounded-md border bg-[#1f1f1f] px-3.5 py-2.5 text-sm text-white placeholder-[#7c7c7c] transition-colors focus:outline-none ${
+          className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-[#222222] placeholder-[#929292] transition-all focus:outline-none ${
             error
-              ? "border-[#f3727f] focus:border-[#f3727f] focus:ring-1 focus:ring-[#f3727f]"
-              : "border-[#4d4d4d] focus:border-white focus:ring-1 focus:ring-white"
-          } disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+              ? "border-[#c13515] focus:border-[#c13515] focus:ring-1 focus:ring-[#c13515]"
+              : "border-[#dddddd] focus:border-[#222222] focus:ring-1 focus:ring-[#222222]"
+          } disabled:cursor-not-allowed disabled:bg-[#f7f7f7] disabled:opacity-50 ${className}`}
           {...props}
         />
         {error ? (
-          <p className="text-xs font-medium text-[#f3727f]">{error}</p>
+          <p className="text-xs font-medium text-[#c13515]">{error}</p>
         ) : helperText ? (
-          <p className="text-xs text-[#7c7c7c]">{helperText}</p>
+          <p className="text-xs text-[#6a6a6a]">{helperText}</p>
         ) : null}
       </div>
     );
@@ -38,4 +38,3 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 );
 
 Input.displayName = "Input";
-

@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -57,3 +59,4 @@ export class Space {
   @UpdateDateColumn({ type: "timestamp with time zone" })
   updatedAt!: Date;
 }
+

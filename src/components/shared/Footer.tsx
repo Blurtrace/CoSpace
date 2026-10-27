@@ -1,35 +1,39 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="border-t border-[#282828] bg-[#121212] py-12 text-[#b3b3b3]">
+    <footer className="border-t border-[#ebebeb] bg-[#f7f7f7] py-10 text-[#6a6a6a]">
       <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
-          <div className="h-6 w-6 rounded-full bg-[#1ed760] flex items-center justify-center font-black text-black text-[10px]">
-            CS
-          </div>
-          <span className="text-sm font-bold text-white tracking-tight">CoSpace</span>
-          <span className="text-xs text-[#7c7c7c]">Plataforma de Coworking</span>
+          <Image
+            src="/gemini-svg.svg"
+            alt="CoSpace"
+            width={24}
+            height={24}
+            className="h-6 w-6 rounded-md object-contain"
+          />
+          <span className="text-sm font-bold text-[#222222] tracking-tight">CoSpace</span>
+          <span className="text-xs text-[#929292]">&middot; Coworking Spaces</span>
         </div>
 
-        <div className="flex items-center gap-6 text-xs">
-          <Link href="/spaces" className="hover:text-white transition-colors">
+        <div className="flex items-center gap-6 text-sm">
+          <Link href="/spaces" className="hover:text-[#222222] transition-colors">
             Catálogo
           </Link>
-          <Link href="/login" className="hover:text-white transition-colors">
+          <Link href="/login" className="hover:text-[#222222] transition-colors">
             Acceso
           </Link>
-          <Link href="/dashboard" className="hover:text-white transition-colors">
-            Reservas
+          <Link href="/dashboard/reservas" className="hover:text-[#222222] transition-colors">
+            Mis Reservas
           </Link>
         </div>
 
-        <p className="text-xs text-[#7c7c7c]">
-          &copy; {new Date().getFullYear()} CoSpace. Diseñado bajo especificación Spotify Design System.
+        <p className="text-xs text-[#929292]">
+          &copy; {new Date().getFullYear()} CoSpace. Airbnb Design System Specification.
         </p>
       </div>
     </footer>
   );
 };
-

@@ -1,7 +1,10 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { config } from "dotenv";
-import { User, RefreshToken, Space, Reservation } from "./entities";
+import { User } from "./entities/User";
+import { RefreshToken } from "./entities/RefreshToken";
+import { Space } from "./entities/Space";
+import { Reservation } from "./entities/Reservation";
 import { InitialSchema1710000000000 } from "./migrations/1710000000000-InitialSchema";
 
 // Carga variables de entorno para ejecuciones CLI y scripts fuera de Next.js

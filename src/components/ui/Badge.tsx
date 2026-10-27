@@ -11,14 +11,14 @@ export const Badge: React.FC<BadgeProps> = ({
   variant = "neutral",
   className = "",
 }) => {
-  const baseStyles = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider";
+  const baseStyles = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold";
 
   const variantStyles = {
-    success: "bg-[#1ed760]/15 text-[#1ed760] border border-[#1ed760]/30",
-    warning: "bg-[#ffa42b]/15 text-[#ffa42b] border border-[#ffa42b]/30",
-    danger: "bg-[#f3727f]/15 text-[#f3727f] border border-[#f3727f]/30",
-    info: "bg-[#539df5]/15 text-[#539df5] border border-[#539df5]/30",
-    neutral: "bg-[#282828] text-[#b3b3b3] border border-[#4d4d4d]",
+    success: "bg-[#eaf8ee] text-[#137333] border border-[#c6eccd]",
+    warning: "bg-[#fff8e6] text-[#b06000] border border-[#ffe099]",
+    danger: "bg-[#fff0f2] text-[#c13515] border border-[#ffd1da]",
+    info: "bg-[#e8f2ff] text-[#1a73e8] border border-[#c2dcff]",
+    neutral: "bg-[#f7f7f7] text-[#3f3f3f] border border-[#dddddd]",
   };
 
   return (
@@ -27,4 +27,3 @@ export const Badge: React.FC<BadgeProps> = ({
     </span>
   );
 };
-

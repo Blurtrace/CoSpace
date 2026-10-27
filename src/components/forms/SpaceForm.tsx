@@ -58,14 +58,14 @@ export const SpaceForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl bg-[#181818] p-8 rounded-2xl border border-[#282828] shadow-[rgba(0,0,0,0.5)_0px_8px_24px]">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl bg-white p-8 rounded-2xl border border-[#dddddd] shadow-sm">
       <div>
-        <h2 className="text-xl font-bold text-white">Nuevo Espacio de Coworking</h2>
-        <p className="text-xs text-[#b3b3b3] mt-1">Completa los datos para publicar un nuevo puesto u oficina en el catálogo.</p>
+        <h2 className="text-xl font-bold text-[#222222]">Nuevo Espacio de Coworking</h2>
+        <p className="text-xs text-[#6a6a6a] mt-1">Completa los datos para publicar un nuevo puesto u oficina en el catálogo.</p>
       </div>
 
       {error && (
-        <div className="rounded-md border border-[#f3727f]/30 bg-[#f3727f]/10 p-3 text-xs font-semibold text-[#f3727f]">
+        <div className="rounded-xl border border-[#ffd1da] bg-[#fff0f2] p-3 text-xs font-semibold text-[#c13515]">
           {error}
         </div>
       )}
@@ -80,7 +80,7 @@ export const SpaceForm: React.FC = () => {
         />
 
         <div className="flex flex-col gap-1.5 text-left">
-          <label className="text-xs font-bold uppercase tracking-wider text-[#b3b3b3]">
+          <label className="text-xs font-semibold text-[#222222]">
             Descripción
           </label>
           <textarea
@@ -88,19 +88,19 @@ export const SpaceForm: React.FC = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Características, servicios incluidos y comodidades..."
-            className="w-full rounded-md border border-[#4d4d4d] bg-[#1f1f1f] p-3 text-sm text-white placeholder-[#7c7c7c] focus:border-white focus:outline-none"
+            className="w-full rounded-xl border border-[#dddddd] bg-white p-3 text-sm text-[#222222] placeholder-[#929292] focus:border-[#222222] focus:outline-none"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="flex flex-col gap-1.5 text-left">
-            <label className="text-xs font-bold uppercase tracking-wider text-[#b3b3b3]">
+            <label className="text-xs font-semibold text-[#222222]">
               Tipo
             </label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as SpaceType)}
-              className="w-full rounded-md border border-[#4d4d4d] bg-[#1f1f1f] px-3 py-2.5 text-sm text-white focus:border-white focus:outline-none"
+              className="w-full rounded-xl border border-[#dddddd] bg-white px-3 py-2.5 text-sm text-[#222222] focus:border-[#222222] focus:outline-none"
             >
               <option value="desk">Puesto Flexible (Desk)</option>
               <option value="meeting_room">Sala de Juntas</option>
@@ -139,7 +139,7 @@ export const SpaceForm: React.FC = () => {
         />
       </div>
 
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#282828]">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#ebebeb]">
         <Button
           type="button"
           variant="outline"
@@ -161,4 +161,3 @@ export const SpaceForm: React.FC = () => {
     </form>
   );
 };
-

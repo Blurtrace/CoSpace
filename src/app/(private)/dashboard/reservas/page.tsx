@@ -60,7 +60,6 @@ export default function ReservasDashboardPage() {
     try {
       setIsSubmittingCancel(true);
       setCancelError(null);
-
       const res = await fetch(`/api/reservations/${cancellingId}/cancel`, {
         method: "PATCH",
         credentials: "include",
@@ -93,17 +92,17 @@ export default function ReservasDashboardPage() {
   );
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-12">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-[#282828]">
+    <main className="mx-auto max-w-7xl px-6 py-10 md:py-12">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-[#ebebeb]">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">{t("dashboard.title")}</h1>
-          <p className="text-sm text-[#b3b3b3] mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#222222]">{t("dashboard.title")}</h1>
+          <p className="text-sm text-[#6a6a6a] mt-1">
             {t("dashboard.subtitle")}
           </p>
         </div>
         <Link
           href="/spaces"
-          className="inline-flex items-center gap-2 rounded-full bg-[#1ed760] px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition-transform hover:scale-105 active:scale-95"
+          className="inline-flex items-center gap-2 rounded-xl bg-[#ff385c] px-6 py-2.5 text-xs font-semibold text-white transition-all hover:bg-[#e00b41] hover:shadow-sm active:scale-95"
         >
           <PlusCircle className="h-4 w-4" />
           <span>{t("dashboard.newReservation")}</span>
@@ -111,14 +110,14 @@ export default function ReservasDashboardPage() {
       </div>
 
       {error && (
-        <div className="mt-6 rounded-md border border-[#f3727f]/30 bg-[#f3727f]/10 p-4 text-sm font-semibold text-[#f3727f]">
+        <div className="mt-6 rounded-xl border border-[#ffd1da] bg-[#fff0f2] p-4 text-sm font-semibold text-[#c13515]">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="py-20 text-center text-sm text-[#b3b3b3]">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-[#1ed760] border-t-transparent mb-3" />
+        <div className="py-20 text-center text-sm text-[#6a6a6a]">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-2 border-[#ff385c] border-t-transparent mb-3" />
           <p>Cargando tus reservas...</p>
         </div>
       ) : (
@@ -126,20 +125,20 @@ export default function ReservasDashboardPage() {
           {/* Sección de Reservas Próximas */}
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">{t("dashboard.upcoming")}</h2>
-              <span className="text-xs font-semibold text-[#1ed760] bg-[#1ed760]/10 px-3 py-1 rounded-full">
+              <h2 className="text-xl font-bold text-[#222222]">{t("dashboard.upcoming")}</h2>
+              <span className="text-xs font-semibold text-[#ff385c] bg-[#fff1f3] border border-[#ffd1da] px-3 py-1 rounded-full">
                 {t("dashboard.maxNotice", { count: upcomingReservations.length })}
               </span>
             </div>
 
             {upcomingReservations.length === 0 ? (
-              <div className="rounded-xl border border-[#282828] bg-[#181818] p-8 text-center text-[#b3b3b3]">
-                <CalendarX className="mx-auto h-8 w-8 text-[#7c7c7c] mb-2" />
-                <p className="text-sm font-bold text-white">{t("dashboard.empty")}</p>
-                <p className="text-xs text-[#7c7c7c] mt-1 mb-4">{t("dashboard.emptyDesc")}</p>
+              <div className="rounded-2xl border border-[#ebebeb] bg-[#f7f7f7] p-8 text-center text-[#6a6a6a]">
+                <CalendarX className="mx-auto h-8 w-8 text-[#929292] mb-2" />
+                <p className="text-sm font-bold text-[#222222]">{t("dashboard.empty")}</p>
+                <p className="text-xs text-[#6a6a6a] mt-1 mb-4">{t("dashboard.emptyDesc")}</p>
                 <Link
                   href="/spaces"
-                  className="inline-block rounded-full border border-[#7c7c7c] px-5 py-2 text-xs font-bold uppercase tracking-wider text-white hover:border-white transition-colors"
+                  className="inline-block rounded-xl border border-[#dddddd] bg-white px-5 py-2 text-xs font-semibold text-[#222222] hover:border-[#222222] transition-colors"
                 >
                   {t("dashboard.exploreBtn")}
                 </Link>
@@ -159,9 +158,9 @@ export default function ReservasDashboardPage() {
 
           {/* Sección de Historial */}
           {pastOrCancelledReservations.length > 0 && (
-            <section className="space-y-4 border-t border-[#282828] pt-8">
-              <h2 className="text-lg font-bold text-[#b3b3b3]">{t("dashboard.history")}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-75 hover:opacity-100 transition-opacity">
+            <section className="space-y-4 border-t border-[#ebebeb] pt-8">
+              <h2 className="text-lg font-bold text-[#6a6a6a]">{t("dashboard.history")}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80 hover:opacity-100 transition-opacity">
                 {pastOrCancelledReservations.map((reservation) => (
                   <ReservationCard key={reservation.id} reservation={reservation} />
                 ))}
@@ -178,16 +177,16 @@ export default function ReservasDashboardPage() {
         title={t("dashboard.cancelTitle")}
       >
         <div className="space-y-4">
-          <p className="text-sm text-[#cbcbcb]">
+          <p className="text-sm text-[#3f3f3f]">
             {t("dashboard.cancelPrompt")}
           </p>
 
-          <p className="text-xs text-[#b3b3b3] bg-[#222222] p-3 rounded-lg border border-[#333333]">
+          <p className="text-xs text-[#6a6a6a] bg-[#f7f7f7] p-3 rounded-xl border border-[#ebebeb]">
             {t("dashboard.cancelRuleNotice")}
           </p>
 
           {cancelError && (
-            <div className="rounded-md border border-[#f3727f]/30 bg-[#f3727f]/10 p-3 text-xs font-semibold text-[#f3727f]">
+            <div className="rounded-xl border border-[#ffd1da] bg-[#fff0f2] p-3 text-xs font-semibold text-[#c13515]">
               {cancelError}
             </div>
           )}
@@ -215,4 +214,3 @@ export default function ReservasDashboardPage() {
     </main>
   );
 }
-

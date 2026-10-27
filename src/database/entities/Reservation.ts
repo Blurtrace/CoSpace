@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -69,4 +70,3 @@ export class Reservation {
   @UpdateDateColumn({ type: "timestamp with time zone" })
   updatedAt!: Date;
 }
-

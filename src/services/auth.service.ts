@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import { Repository, DataSource } from "typeorm";
 import { getDataSource } from "@/database/data-source";
 import { User } from "@/database/entities/User";
 import { RefreshToken } from "@/database/entities/RefreshToken";
@@ -32,10 +34,38 @@ function toUserDTO(user: User): UserDTO {
 }
 
 export class AuthService {
+  /**
+   * Obtiene el repositorio de User de forma segura bajo Next.js/Turbopack.
+   */
+  private static getUserRepository(dataSource: DataSource): Repository<User> {
+    if (dataSource.hasMetadata(User)) {
+      return dataSource.getRepository(User);
+    }
+    try {
+      return dataSource.getRepository<User>("User");
+    } catch {
+      return dataSource.getRepository<User>("users");
+    }
+  }
+
+  /**
+   * Obtiene el repositorio de RefreshToken de forma segura bajo Next.js/Turbopack.
+   */
+  private static getTokenRepository(dataSource: DataSource): Repository<RefreshToken> {
+    if (dataSource.hasMetadata(RefreshToken)) {
+      return dataSource.getRepository(RefreshToken);
+    }
+    try {
+      return dataSource.getRepository<RefreshToken>("RefreshToken");
+    } catch {
+      return dataSource.getRepository<RefreshToken>("refresh_tokens");
+    }
+  }
+
   static async register(input: RegisterInput): Promise<AuthResult> {
     const dataSource = await getDataSource();
-    const userRepository = dataSource.getRepository(User);
-    const tokenRepository = dataSource.getRepository(RefreshToken);
+    const userRepository = this.getUserRepository(dataSource);
+    const tokenRepository = this.getTokenRepository(dataSource);
 
     const normalizedEmail = input.email.trim().toLowerCase();
 
@@ -86,8 +116,8 @@ export class AuthService {
 
   static async login(input: LoginInput): Promise<AuthResult> {
     const dataSource = await getDataSource();
-    const userRepository = dataSource.getRepository(User);
-    const tokenRepository = dataSource.getRepository(RefreshToken);
+    const userRepository = this.getUserRepository(dataSource);
+    const tokenRepository = this.getTokenRepository(dataSource);
 
     const normalizedEmail = input.email.trim().toLowerCase();
 
@@ -136,7 +166,7 @@ export class AuthService {
     }
 
     const dataSource = await getDataSource();
-    const tokenRepository = dataSource.getRepository(RefreshToken);
+    const tokenRepository = this.getTokenRepository(dataSource);
 
     const hashedIncomingToken = hashToken(rawRefreshToken);
 
@@ -194,7 +224,7 @@ export class AuthService {
     }
 
     const dataSource = await getDataSource();
-    const tokenRepository = dataSource.getRepository(RefreshToken);
+    const tokenRepository = this.getTokenRepository(dataSource);
     const hashedIncomingToken = hashToken(rawRefreshToken);
 
     const tokenRecord = await tokenRepository.findOne({
@@ -209,7 +239,7 @@ export class AuthService {
 
   static async getUserProfile(userId: string): Promise<UserDTO> {
     const dataSource = await getDataSource();
-    const userRepository = dataSource.getRepository(User);
+    const userRepository = this.getUserRepository(dataSource);
 
     const user = await userRepository.findOne({
       where: { id: userId },
@@ -222,4 +252,3 @@ export class AuthService {
     return toUserDTO(user);
   }
 }
-

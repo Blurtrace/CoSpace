@@ -46,12 +46,12 @@ export const RegisterForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-1 text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-white">Crear Cuenta</h1>
-        <p className="text-xs text-[#b3b3b3]">Regístrate para comenzar a reservar tus espacios</p>
+        <h1 className="text-2xl font-bold tracking-tight text-[#222222]">Crear Cuenta</h1>
+        <p className="text-xs text-[#6a6a6a]">Regístrate para comenzar a reservar tus espacios</p>
       </div>
 
       {error && (
-        <div className="rounded-md border border-[#f3727f]/30 bg-[#f3727f]/10 p-3 text-xs font-semibold text-[#f3727f]">
+        <div className="rounded-xl border border-[#ffd1da] bg-[#fff0f2] p-3 text-xs font-semibold text-[#c13515]">
           {error}
         </div>
       )}
@@ -101,13 +101,12 @@ export const RegisterForm: React.FC = () => {
         Registrarse
       </Button>
 
-      <div className="border-t border-[#282828] pt-4 text-center text-xs text-[#b3b3b3]">
+      <div className="border-t border-[#ebebeb] pt-4 text-center text-xs text-[#6a6a6a]">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-bold text-white hover:underline hover:text-[#1ed760]">
+        <Link href="/login" className="font-semibold text-[#222222] hover:text-[#ff385c]">
           Inicia sesión aquí
         </Link>
       </div>
     </form>
   );
 };
-
