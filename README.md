@@ -1,5 +1,17 @@
 # CoSpace — Plataforma de Reserva de Espacios de Coworking
 
+<p align="center">
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-16.4.3-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://typeorm.io/"><img src="https://img.shields.io/badge/TypeORM-0.3.17-FE0979?style=for-the-badge&logo=typeorm&logoColor=white" alt="TypeORM" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://supabase.com/"><img src="https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" /></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" /></a>
+  <a href="https://jestjs.io/"><img src="https://img.shields.io/badge/Jest-29.7-C21325?style=for-the-badge&logo=jest&logoColor=white" alt="Jest" /></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-24.0-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" /></a>
+  <a href="https://vercel.com/"><img src="https://img.shields.io/badge/Vercel-Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" /></a>
+</p>
+
 CoSpace es una plataforma web moderna de reserva de espacios de trabajo colaborativo (hot desks, salas de juntas y oficinas privadas) construida con **Next.js 16 (App Router)**, **TypeScript**, **PostgreSQL en Supabase** y **TypeORM**.
 
 Diseñada bajo arquitectura limpia, reglas estrictas de concurrencia pesimista en base de datos, autenticación segura con cookies `httpOnly`, soporte bilingüe (español / inglés) y un sistema visual refinado y minimalista.
@@ -26,18 +38,19 @@ Diseñada bajo arquitectura limpia, reglas estrictas de concurrencia pesimista e
 
 ## 2. Stack Tecnológico
 
-| Capa | Tecnología | Versión |
-|---|---|---|
-| **Framework** | Next.js (App Router, Turbopack) | `16.4.3` |
-| **Lenguaje** | TypeScript (Modo Estricto) | `5.5+` |
-| **Estilos** | Tailwind CSS con variables de diseño personalizadas | `3.4.1` |
-| **Iconografía** | Lucide React | `1.16.0` |
-| **ORM** | TypeORM | `0.3.17` |
-| **Base de Datos** | PostgreSQL (Alojado en Supabase) | `16` |
-| **Autenticación** | JWT (`jsonwebtoken`) + Criptografía `bcryptjs` | `9.0.2` |
-| **Validaciones** | Zod | `3.24.2` |
-| **Pruebas** | Jest + React Testing Library | `29.7.0` |
-| **Contenedores**| Docker (Multi-stage build) | `22-alpine` |
+| Capa | Tecnología | Insignia | Versión |
+|---|---|---|---|
+| **Framework** | Next.js (App Router, Turbopack) | ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js) | `16.4.3` |
+| **Lenguaje** | TypeScript (Modo Estricto) | ![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue?logo=typescript) | `5.5+` |
+| **Estilos** | Tailwind CSS | ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.4-teal?logo=tailwind-css) | `3.4.1` |
+| **Iconografía** | Lucide React | ![Lucide](https://img.shields.io/badge/Lucide-1.16-F56565?logo=feather) | `1.16.0` |
+| **ORM** | TypeORM | ![TypeORM](https://img.shields.io/badge/TypeORM-0.3.17-red?logo=typeorm) | `0.3.17` |
+| **Base de Datos** | PostgreSQL en Supabase | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-purple?logo=postgresql) ![Supabase](https://img.shields.io/badge/Supabase-1.0-orange?logo=supabase) | `16` |
+| **Autenticación** | JWT + `bcryptjs` | ![JWT](https://img.shields.io/badge/JWT-Tokens-black?logo=jsonwebtokens) | `9.0.2` |
+| **Validaciones** | Zod | ![Zod](https://img.shields.io/badge/Zod-3.24-3068b7?logo=zod) | `3.24.2` |
+| **Pruebas** | Jest + React Testing Library | ![Jest](https://img.shields.io/badge/Jest-29.7-yellow?logo=jest) | `29.7.0` |
+| **Contenedores**| Docker (Multi-stage) | ![Docker](https://img.shields.io/badge/Docker-24.0-blue?logo=docker) | `22-alpine` |
+| **Despliegue** | Vercel Platform | ![Vercel](https://img.shields.io/badge/Vercel-Deployment-black?logo=vercel) | Serverless |
 
 ---
 
