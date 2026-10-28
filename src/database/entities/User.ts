@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,8 +7,8 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import type { RefreshToken } from "./RefreshToken";
-import type { Reservation } from "./Reservation";
+import { RefreshToken } from "./RefreshToken";
+import { Reservation } from "./Reservation";
 
 export type UserRole = "admin" | "user";
 
@@ -34,12 +33,12 @@ export class User {
   })
   role!: UserRole;
 
-  @OneToMany("RefreshToken", (refreshToken: RefreshToken) => refreshToken.user, {
+  @OneToMany(() => RefreshToken, (refreshToken: RefreshToken) => refreshToken.user, {
     cascade: true,
   })
   refreshTokens!: RefreshToken[];
 
-  @OneToMany("Reservation", (reservation: Reservation) => reservation.user)
+  @OneToMany(() => Reservation, (reservation: Reservation) => reservation.user)
   reservations!: Reservation[];
 
   @CreateDateColumn({ type: "timestamp with time zone" })
@@ -48,4 +47,3 @@ export class User {
   @UpdateDateColumn({ type: "timestamp with time zone" })
   updatedAt!: Date;
 }
-

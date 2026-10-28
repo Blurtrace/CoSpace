@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import "reflect-metadata";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,7 +8,7 @@ import {
   OneToMany,
   Index,
 } from "typeorm";
-import type { Reservation } from "./Reservation";
+import { Reservation } from "./Reservation";
 import { numericTransformer } from "./transformers";
 
 export type SpaceType = "desk" | "meeting_room" | "private_office";
@@ -50,7 +49,7 @@ export class Space {
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
-  @OneToMany("Reservation", (reservation: Reservation) => reservation.space)
+  @OneToMany(() => Reservation, (reservation: Reservation) => reservation.space)
   reservations!: Reservation[];
 
   @CreateDateColumn({ type: "timestamp with time zone" })
@@ -59,4 +58,3 @@ export class Space {
   @UpdateDateColumn({ type: "timestamp with time zone" })
   updatedAt!: Date;
 }
-
