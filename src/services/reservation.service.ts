@@ -20,7 +20,21 @@ export class ReservationService {
     if (dataSource.hasMetadata(Reservation)) {
       return dataSource.getRepository(Reservation);
     }
-    return dataSource.getRepository<Reservation>("Reservation");
+    try {
+      return dataSource.getRepository<Reservation>("Reservation");
+    } catch {
+      try {
+        return dataSource.getRepository<Reservation>("reservations");
+      } catch {
+        const meta = dataSource.entityMetadatas.find(
+          (m) => m.name === "Reservation" || m.tableName === "reservations" || m.target === Reservation
+        );
+        if (meta) {
+          return dataSource.getRepository<Reservation>(meta.target);
+        }
+        throw new Error("No metadata for Reservation was found in DataSource");
+      }
+    }
   }
 
   /**
@@ -30,7 +44,21 @@ export class ReservationService {
     if (dataSource.hasMetadata(Space)) {
       return dataSource.getRepository(Space);
     }
-    return dataSource.getRepository<Space>("Space");
+    try {
+      return dataSource.getRepository<Space>("Space");
+    } catch {
+      try {
+        return dataSource.getRepository<Space>("spaces");
+      } catch {
+        const meta = dataSource.entityMetadatas.find(
+          (m) => m.name === "Space" || m.tableName === "spaces" || m.target === Space
+        );
+        if (meta) {
+          return dataSource.getRepository<Space>(meta.target);
+        }
+        throw new Error("No metadata for Space was found in DataSource");
+      }
+    }
   }
 
   /**

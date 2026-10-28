@@ -23,6 +23,11 @@ export const AppDataSource = new DataSource({
   entities: [User, RefreshToken, Space, Reservation],
   migrations: [InitialSchema1710000000000],
   subscribers: [],
+  extra: {
+    max: 2,
+    connectionTimeoutMillis: 5000,
+    idleTimeoutMillis: 10000,
+  },
 });
 
 declare global {
