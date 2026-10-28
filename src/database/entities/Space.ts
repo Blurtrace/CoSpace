@@ -8,7 +8,7 @@ import {
   OneToMany,
   Index,
 } from "typeorm";
-import { Reservation } from "./Reservation";
+import type { Reservation } from "./Reservation";
 import { numericTransformer } from "./transformers";
 
 export type SpaceType = "desk" | "meeting_room" | "private_office";
@@ -49,7 +49,7 @@ export class Space {
   @Column({ type: "boolean", default: true })
   isActive!: boolean;
 
-  @OneToMany(() => Reservation, (reservation: Reservation) => reservation.space)
+  @OneToMany("Reservation", (reservation: Reservation) => reservation.space)
   reservations!: Reservation[];
 
   @CreateDateColumn({ type: "timestamp with time zone" })
